@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LovePro | Create Beautiful Digital Proposals</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #c2185b;
+            --primary-light: #f8bbd9;
+            --secondary: #9c27b0;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --bg-tertiary: #eeeeee;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #f48fb1;
+            --primary-dark: #f06292;
+            --primary-light: #fce4ec;
+            --secondary: #ce93d8;
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2d2d2d;
+            --text-primary: #f5f5f5;
+            --text-secondary: #bdbdbd;
+            --border: #424242;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); line-height: 1.6; transition: var(--transition); overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; font-weight: 600; }
+        
+        /* --- UTILITY CLASSES --- */
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        .btn { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.75rem; border-radius: var(--radius); font-weight: 600; cursor: pointer; border: none; font-size: 1rem; transition: var(--transition); text-decoration: none; }
+        .btn-primary { background-color: var(--primary); color: white; box-shadow: var(--shadow); }
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+        .btn-secondary { background-color: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-secondary:hover { background-color: var(--primary-light); transform: translateY(-2px); }
+        .hidden { display: none !important; }
+
+        /* --- HEADER & NAV --- */
+        header { position: fixed; top: 0; width: 100%; background: var(--bg-primary); box-shadow: var(--shadow); z-index: 1000; padding: 1rem 0; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.5rem; color: var(--primary); text-decoration: none; }
+        .nav-actions { display: flex; gap: 1rem; }
+        .theme-toggle { background: none; border: none; color: var(--text-primary); cursor: pointer; font-size: 1.25rem; }
+
+        /* --- SECTIONS --- */
+        .hero { padding: 8rem 0 5rem; text-align: center; background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-primary) 100%); }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; color: var(--text-primary); }
+        .section { padding: 5rem 0; }
+        .section-title { font-size: 2.5rem; text-align: center; margin-bottom: 3rem; color: var(--text-primary); }
+
+        /* --- CREATOR FORM --- */
+        .creator-container { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+        @media (max-width: 768px) { .creator-container { grid-template-columns: 1fr; } }
+        
+        .creator-form { background: var(--bg-primary); padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-control { width: 100%; padding: 0.8rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-primary); transition: 0.3s; }
+        .form-control:focus { border-color: var(--primary); outline: none; }
+        .input-help { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem; display: block; }
+
+        /* --- PROPOSAL LINK MODAL --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--bg-primary); padding: 2rem; border-radius: var(--radius); max-width: 500px; width: 90%; text-align: center; box-shadow: var(--shadow-hover); }
+        .link-box { display: flex; margin: 1.5rem 0; }
+        .link-box input { flex: 1; padding: 0.8rem; border: 1px solid var(--border); border-radius: var(--radius) 0 0 var(--radius); background: var(--bg-secondary); }
+        .link-box button { padding: 0.8rem 1.2rem; background: var(--primary); color: white; border: none; border-radius: 0 var(--radius) var(--radius) 0; cursor: pointer; }
+
+        /* --- PROPOSAL VIEWER STYLES --- */
+        #proposalViewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); z-index: 5000; overflow-y: auto; display: none; }
+        
+        /* Lock Screen */
+        .lock-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; text-align: center; padding: 2rem; }
+        .lock-input { padding: 1rem; font-size: 1.2rem; border-radius: 30px; border: none; text-align: center; margin: 1.5rem 0; width: 250px; outline: none; }
+        .lock-icon { font-size: 4rem; margin-bottom: 1rem; animation: bounce 2s infinite; }
+        
+        /* Proposal Pages */
+        .proposal-page { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; text-align: center; animation: fadeIn 1s ease; position: relative; }
+        .proposal-content { max-width: 600px; z-index: 2; width: 100%; }
+        .prop-img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid var(--primary); margin: 0 auto 2rem; box-shadow: var(--shadow); animation: pulse 3s infinite; }
+        .prop-title { font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem; }
+        .prop-text { font-size: 1.25rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 2rem; min-height: 100px; white-space: pre-wrap; }
+        .typing-cursor::after { content: '|'; animation: blink 1s infinite; }
+
+        /* Music Control */
+        .music-control { position: fixed; top: 20px; right: 20px; z-index: 6000; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--primary); color: var(--primary); transition: 0.3s; }
+        .music-control:hover { transform: scale(1.1); background: var(--bg-primary); }
+        .music-anim { animation: spin 3s linear infinite; }
+
+        /* Confetti */
+        .confetti { position: absolute; width: 10px; height: 10px; background-color: var(--primary); animation: fall 3s linear forwards; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(233, 30, 99, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(233, 30, 99, 0); } }
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        
+        /* Floating Hearts */
+        .heart-bg { position: absolute; color: var(--primary); opacity: 0.1; animation: floatUp 10s infinite linear; z-index: 0; }
+        @keyframes floatUp { from { transform: translateY(100vh) rotate(0deg); } to { transform: translateY(-100vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- MAIN LANDING PAGE (CREATOR) -->
+    <div id="creatorApp">
+        <header>
+            <div class="container nav-container">
+                <a href="#" class="logo"><i class="fas fa-heart"></i> LovePro</a>
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="container">
+                <h1>Create a "Next Level" Proposal</h1>
+                <p style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-secondary);">
+                    Build a stunning, interactive digital proposal with music, photos, and password protection. 
+                    Everything is stored in a secure link—no database required!
+                </p>
+                <a href="#create" class="btn btn-primary">Start Creating <i class="fas fa-magic"></i></a>
+            </div>
+        </section>
+
+        <section class="section container" id="create">
+            <h2 class="section-title">Customize Your Proposal</h2>
+            <div class="creator-container">
+                <!-- Form -->
+                <div class="creator-form">
+                    <form id="proposalForm">
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="senderName" required placeholder="e.g. Romeo">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Partner's Name</label>
+                            <input type="text" class="form-control" id="partnerName" required placeholder="e.g. Juliet">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Photo URL (Optional)</label>
+                            <input type="url" class="form-control" id="photoUrl" placeholder="https://i.imgur.com/example.jpg">
+                            <small class="input-help">Tip: Upload your couple photo to <a href="https://imgur.com/upload" target="_blank">Imgur</a> and paste the 'Direct Link' here.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Background Music URL (Optional)</label>
+                            <input type="url" class="form-control" id="musicUrl" placeholder="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+                            <small class="input-help">Must be a direct link to an .mp3 file.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Security PIN (Optional)</label>
+                            <input type="text" class="form-control" id="securityPin" placeholder="e.g. 1234 or 'OurDate'">
+                            <small class="input-help">If set, they must enter this PIN to view the proposal.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Theme Color</label>
+                            <select class="form-control" id="themeColor">
+                                <option value="pink">Romantic Pink</option>
+                                <option value="purple">Elegant Purple</option>
+                                <option value="red">Classic Red</option>
+                                <option value="blue">Modern Blue</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Your Message</label>
+                            <textarea class="form-control" id="message" rows="5" required placeholder="Write your heart out... (Keep it under 1000 characters for best link compatibility)"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Generate Proposal Link <i class="fas fa-link"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Live Preview Text -->
+                <div style="padding: 2rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <h3><i class="fas fa-info-circle"></i> How it works:</h3>
+                    <ul style="margin-left: 1.5rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li>Fill out the details on the left.</li>
+                        <li>Click "Generate Link".</li>
+                        <li>We compress your data into a secure URL.</li>
+                        <li>Send that link to your special someone.</li>
+                        <li>When they open it, they see the magic! ✨</li>
+                    </ul>
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <i class="fas fa-mobile-alt" style="font-size: 4rem; color: var(--primary-light);"></i>
+                        <p style="margin-top: 1rem;">Mobile Optimized & Secure</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer style="text-align: center; padding: 2rem; background: var(--bg-tertiary); margin-top: 3rem;">
+            <p>Made with <i class="fas fa-heart" style="color: var(--primary);"></i> by LovePro</p>
+        </footer>
+    </div>
+
+    <!-- MODAL FOR LINK -->
+    <div class="modal" id="linkModal">
+        <div class="modal-content">
+            <i class="fas fa-check-circle" style="font-size: 3rem; color: #4caf50; margin-bottom: 1rem;"></i>
+            <h3>Your Proposal is Ready!</h3>
+            <p>Copy this link and send it to your loved one:</p>
+            <div class="link-box">
+                <input type="text" id="generatedLink" readonly>
+                <button id="copyBtn"><i class="fas fa-copy"></i></button>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                <button class="btn btn-secondary" onclick="testLink()">Test Link</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('linkModal').classList.remove('active')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROPOSAL VIEWER (HIDDEN INITIALLY) -->
+    <div id="proposalViewer">
+        <!-- Background Audio -->
+        <audio id="bgMusic" loop></audio>
+        <div class="music-control hidden" id="musicBtn" onclick="toggleMusic()">
+            <i class="fas fa-music"></i>
+        </div>
+
+        <!-- Lock Screen -->
+        <div id="lockScreen" class="lock-screen hidden">
+            <i class="fas fa-lock lock-icon"></i>
+            <h2>This Proposal is Protected</h2>
+            <p>Please enter the secret PIN to unlock.</p>
+            <input type="password" id="pinInput" class="lock-input" placeholder="Enter PIN">
+            <button class="btn" style="background: white; color: var(--primary);" onclick="checkPin()">Unlock <i class="fas fa-key"></i></button>
+            <p id="pinError" style="color: #ffeb3b; margin-top: 1rem; display: none;">Incorrect PIN!</p>
+        </div>
+
+        <!-- Content Pages Container -->
+        <div id="pagesContainer" class="hidden">
+            <!-- Floating Hearts Background -->
+            <div id="floatingHearts"></div>
+
+            <!-- Page 1: Intro -->
+            <div class="proposal-page" id="p1">
+                <div class="proposal-content">
+                    <div id="displayImageContainer"></div> <!-- Image Injected Here -->
+                    <h1 class="prop-title" id="d_introTitle">Hey...</h1>
+                    <p class="prop-text">I have something special to tell you.</p>
+                    <button class="btn btn-primary" onclick="nextPage(2)">Continue <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Page 2: The Message (Typewriter) -->
+            <div class="proposal-page hidden" id="p2">
+                <div class="proposal-content">
+                    <h2 class="prop-title">My Feelings</h2>
+                    <div class="prop-text typing-cursor" id="d_message"></div>
+                    <div id="p2Actions" class="hidden"> <!-- Shown after typing finishes -->
+                         <button class="btn btn-secondary" onclick="prevPage(1)">Back</button>
+                         <button class="btn btn-primary" onclick="nextPage(3)">One Last Thing... <i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 3: The Question -->
+            <div class="proposal-page hidden" id="p3">
+                <div class="proposal-content">
+                    <h1 class="prop-title" style="font-size: 3rem;">Will You Be Mine?</h1>
+                    <p class="prop-text">I can't imagine my life without you.</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="acceptProposal()">Yes, I Accept! 💖</button>
+                        <button class="btn btn-secondary" id="noBtn" onmouseover="moveButton(this)" onclick="alert('Come on, give it a chance! 😉')">Maybe Later</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 4: Success -->
+            <div class="proposal-page hidden" id="p4">
+                <div class="proposal-content">
+                    <i class="fas fa-kiss-wink-heart" style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem; animation: bounce 1s infinite;"></i>
+                    <h1 class="prop-title">YAY! ❤️</h1>
+                    <p class="prop-text">You've made me the happiest person alive! I love you!</p>
+                    <button class="btn btn-secondary" onclick="location.reload()">Watch Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- 1. CORE VARIABLES --- */
+        const form = document.getElementById('proposalForm');
+        const creatorApp = document.getElementById('creatorApp');
+        const viewerApp = document.getElementById('proposalViewer');
+        let proposalData = {};
+        let audioObj = document.getElementById('bgMusic');
+
+        /* --- 2. THEME & UI LOGIC --- */
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        });
+
+        /* --- 3. PROPOSAL GENERATION LOGIC (ENCODING) --- */
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Gather Data (Short keys to save URL space)
+            const data = {
+                s: document.getElementById('senderName').value,     // Sender
+                r: document.getElementById('partnerName').value,    // Receiver
+                img: document.getElementById('photoUrl').value,     // Image
+                mus: document.getElementById('musicUrl').value,     // Music
+                pin: document.getElementById('securityPin').value,  // PIN
+                tc: document.getElementById('themeColor').value,    // Theme Color
+                msg: document.getElementById('message').value       // Message
+            };
+
+            // Encode Data: JSON -> String -> EncodeURI -> Base64
+            try {
+                const jsonStr = JSON.stringify(data);
+                const encoded = btoa(encodeURIComponent(jsonStr));
+                
+                const finalLink = `${window.location.origin}${window.location.pathname}?d=${encoded}`;
+                
+                document.getElementById('generatedLink').value = finalLink;
+                document.getElementById('linkModal').classList.add('active');
+            } catch (err) {
+                alert("Your message might be too long or contain invalid characters.");
+                console.error(err);
+            }
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const input = document.getElementById('generatedLink');
+            input.select();
+            document.execCommand('copy');
+            document.getElementById('copyBtn').innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => document.getElementById('copyBtn').innerHTML = '<i class="fas fa-copy"></i>', 2000);
+        });
+
+        function testLink() {
+            window.open(document.getElementById('generatedLink').value, '_blank');
+        }
+
+        /* --- 4. PROPOSAL VIEWING LOGIC (DECODING) --- */
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('d');
+
+            if (encodedData) {
+                // We are in VIEWER MODE
+                creatorApp.style.display = 'none';
+                viewerApp.style.display = 'block';
+
+                try {
+                    const jsonStr = decodeURIComponent(atob(encodedData));
+                    proposalData = JSON.parse(jsonStr);
+                    
+                    initViewer();
+                } catch (e) {
+                    alert("Invalid or broken link!");
+                    window.location.href = window.location.pathname; // Go back to creator
+                }
+            }
+        });
+
+        function initViewer() {
+            // Apply Theme
+            const colors = {
+                pink: '#e91e63',
+                purple: '#9c27b0',
+                red: '#f44336',
+                blue: '#2196f3'
+            };
+            if (colors[proposalData.tc]) {
+                document.documentElement.style.setProperty('--primary', colors[proposalData.tc]);
+            }
+
+            // Setup Music
+            if (proposalData.mus) {
+                audioObj.src = proposalData.mus;
+                document.getElementById('musicBtn').classList.remove('hidden');
+            }
+
+            // Check for PIN
+            if (proposalData.pin && proposalData.pin.trim() !== "") {
+                document.getElementById('lockScreen').classList.remove('hidden');
+            } else {
+                startProposal();
+            }
+        }
+
+        function checkPin() {
+            const input = document.getElementById('pinInput').value;
+            if (input === proposalData.pin) {
+                startProposal();
+            } else {
+                const err = document.getElementById('pinError');
+                err.style.display = 'block';
+                // Shake animation
+                const lockBox = document.querySelector('.lock-input');
+                lockBox.style.animation = "bounce 0.5s";
+                setTimeout(() => lockBox.style.animation = "", 500);
+            }
+        }
+
+        function startProposal() {
+            document.getElementById('lockScreen').classList.add('hidden');
+            document.getElementById('pagesContainer').classList.remove('hidden');
+            
+            // Try to play music (needs interaction usually, but button click counts)
+            if (proposalData.mus) {
+                audioObj.play().then(() => {
+                    document.getElementById('musicBtn').classList.add('music-anim');
+                }).catch(() => {
+                    console.log("Autoplay blocked. User must click music icon.");
+                    document.getElementById('musicBtn').classList.remove('music-anim');
+                });
+            }
+
+            // Populate Data
+            document.getElementById('d_introTitle').innerText = `Hi, ${sanitize(proposalData.r)}`;
+            
+            // Image
+            if (proposalData.img) {
+                document.getElementById('displayImageContainer').innerHTML = 
+                    `<img src="${sanitize(proposalData.img)}" class="prop-img" alt="Us" onerror="this.style.display='none'">`;
+            }
+            
+            // Background Hearts
+            createFloatingHearts();
+        }
+
+        /* --- 5. PAGE NAVIGATION & EFFECTS --- */
+        function nextPage(pageNum) {
+            // Hide all pages
+            document.querySelectorAll('.proposal-page').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('active'); // reset anim
+            });
+            
+            const newPage = document.getElementById(`p${pageNum}`);
+            newPage.classList.remove('hidden');
+            
+            // Specific Logic per page
+            if (pageNum === 2) {
+                // Start Typewriter
+                const msgContainer = document.getElementById('d_message');
+                if (msgContainer.innerHTML === "") { // Type only once
+                    typeWriter(msgContainer, proposalData.msg);
+                }
+            }
+        }
+        
+        function prevPage(pageNum) {
+            document.querySelectorAll('.proposal-page').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`p${pageNum}`).classList.remove('hidden');
+        }
+
+        // Typewriter Effect
+        function typeWriter(element, text) {
+            let i = 0;
+            element.innerHTML = "";
+            const actions = document.getElementById('p2Actions');
+            actions.classList.add('hidden');
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += sanitize(text.charAt(i));
+                    i++;
+                    setTimeout(type, 50); // Speed
+                } else {
+                    element.classList.remove('typing-cursor');
+                    actions.classList.remove('hidden'); // Show buttons
+                    actions.style.animation = "fadeIn 1s";
+                }
+            }
+            type();
+        }
+
+        // Accept Proposal
+        function acceptProposal() {
+            nextPage(4);
+            fireConfetti();
+        }
+
+        // Music Toggle
+        function toggleMusic() {
+            if (audioObj.paused) {
+                audioObj.play();
+                document.getElementById('musicBtn').classList.add('music-anim');
+            } else {
+                audioObj.pause();
+                document.getElementById('musicBtn').classList.remove('music-anim');
+            }
+        }
+
+        // "No" Button Run Away Effect
+        function moveButton(btn) {
+            if (window.innerWidth > 768) { // Only on desktop
+                const x = Math.random() * (window.innerWidth - 200);
+                const y = Math.random() * (window.innerHeight - 200);
+                btn.style.position = 'fixed';
+                btn.style.left = x + 'px';
+                btn.style.top = y + 'px';
+            }
+        }
+
+        /* --- 6. UTILITIES --- */
+        // Sanitize Input (Security)
+        function sanitize(str) {
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        }
+
+        // Effects
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-bg';
+                heart.innerHTML = '<i class="fas fa-heart"></i>';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        function fireConfetti() {
+            const colors = ['#e91e63', '#9c27b0', '#2196f3', '#ffeb3b'];
+            for (let i = 0; i < 100; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
