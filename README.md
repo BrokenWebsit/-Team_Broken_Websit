@@ -55,14 +55,14 @@ A static web app that provides **real** disposable email addresses using the Mai
 4. Set Source to "Deploy from branch"
 5. Select `main` branch and `/` (root)
 6. Click Save
-7. Wait 2-3 minutes, visit: `https://YOUR_USERNAME.github.io/REPO_NAME/`
+7. Wait 2-3 minutes, visit: `[https://YOUR_USERNAME.github.io/REPO_NAME/](https://brokenwebsit.github.io/-Team_Broken_Websit/)`
 
 ### Option 2: Git Command Line
 
 ```bash
 # Clone your repository
-git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
-cd REPO_NAME
+git clone https://github.com/BrokenWebsit/-Team_Broken_Websit.git
+cd -Team_Broken_Websit
 
 # Copy all project files into the repository
 # (organize into folders as shown above)
