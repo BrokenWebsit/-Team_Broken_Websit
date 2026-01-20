@@ -1,0 +1,22 @@
+{
+  "name": "TempMail - Disposable Email",
+  "short_name": "TempMail",
+  "description": "Privacy-focused temporary email service",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#6366f1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%236366f1'/%3E%3Cpath d='M12 16h24v16H12z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M12 16l12 10 12-10' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%236366f1'/%3E%3Cpath d='M128 170h256v172H128z' fill='none' stroke='%23fff' stroke-width='20'/%3E%3Cpath d='M128 170l128 106 128-106' fill='none' stroke='%23fff' stroke-width='20'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
